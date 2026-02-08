@@ -1,6 +1,6 @@
 from fastmcp import FastMCP
-from .agent import analyze_ruling
-from .feed import fetch_latest_ruling
+from agent import analyze_ruling
+from feed import fetch_latest_ruling
 
 mcp = FastMCP("GDPR Vault")
 
