@@ -3,7 +3,7 @@ load_dotenv()  # <--- This loads the key from the .env file
 
 import os
 from pydantic_ai import Agent
-from .schemas import GDPRAlert
+from schemas import GDPRAlert
 
 # Requires OPENAI_API_KEY in environment variables
 journalist = Agent(
