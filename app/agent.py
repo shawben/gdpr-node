@@ -6,11 +6,8 @@ from schemas import GDPRAlert
 import os
 
 # 1. Define the Agent using Type Hints in brackets [GDPRAlert, None]
-# The first item is the return type, the second is the dependency type (None here)
-journalist = Agent(
-    'openai:gpt-4o-mini',
-    result_type=GDPRAlert,  # Some versions allow this, but the brackets below are safer
-)
+# The [GDPRAlert] here tells the Agent exactly what schema to use for the output
+journalist: Agent[None, GDPRAlert] = Agent('openai:gpt-4o-mini'))
 
 # 2. Use a decorator for the system prompt (it's cleaner and more robust)
 @journalist.system_prompt
