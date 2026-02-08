@@ -7,7 +7,7 @@ import os
 
 # 1. Define the Agent using Type Hints in brackets [GDPRAlert, None]
 # The [GDPRAlert] here tells the Agent exactly what schema to use for the output
-journalist: Agent[None, GDPRAlert] = Agent('openai:gpt-4o-mini'))
+journalist: Agent[None, GDPRAlert] = Agent('openai:gpt-4o-mini')
 
 # 2. Use a decorator for the system prompt (it's cleaner and more robust)
 @journalist.system_prompt
