@@ -3,15 +3,22 @@ load_dotenv()  # <--- This loads the key from the .env file
 
 from pydantic_ai import Agent
 from schemas import GDPRAlert
+import os
 
-# The [GDPRAlert] part tells the agent what to return
-journalist = Agent('openai:gpt-4o-mini', deps_type=None, result_type=GDPRAlert)
+# 1. Define the Agent using Type Hints in brackets [GDPRAlert, None]
+# The first item is the return type, the second is the dependency type (None here)
+journalist = Agent(
+    'openai:gpt-4o-mini',
+    result_type=GDPRAlert,  # Some versions allow this, but the brackets below are safer
+)
 
-# Then add the system prompt separately if the constructor is being picky
+# 2. Use a decorator for the system prompt (it's cleaner and more robust)
 @journalist.system_prompt
-def get_system_prompt():
-    return "You are a Regulatory Risk Analyst. Extract structured data."
+def add_system_prompt():
+    return "You are a Regulatory Risk Analyst. Extract structured data from GDPR rulings."
 
-async def analyze_ruling(raw_text: str) -> GDPRAlert:
-    result = await journalist.run(f"Analyze: {raw_text}")
+# 3. Your analysis function
+async def analyze_ruling(ruling_text: str):
+    # This calls the agent to process the text
+    result = await journalist.run(ruling_text)
     return result.data
