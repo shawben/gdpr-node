@@ -1,4 +1,5 @@
 import os
+import sys   # <--- THIS LINE IS CRITICAL (and was missing or too low)
 import asyncio
 import json
 from fastapi import FastAPI, Request, Response, HTTPException
@@ -12,7 +13,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_dir)
 # ---------------------------------------------------------
 
-# --- IMPORT YOUR AI AGENT ---
+# NOW these imports will work
 from feed import fetch_latest_ruling
 from agent import analyze_ruling
 
