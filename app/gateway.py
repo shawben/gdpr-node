@@ -75,16 +75,38 @@ async def event_generator():
 
     # 2. Run Agent
     try:
-        # The agent returns a structured object (GDPRAlert)
+        # Run analysis
         analysis = await analyze_ruling(raw_text)
+
+        # --- FAIL-SAFE: Check if it's a Dictionary, Object, or String ---
         
-        # Convert to a pretty string for the stream
+        # Case A: It's a Pydantic Model (Object)
+        if hasattr(analysis, 'company_name'):
+            company = analysis.company_name
+            fine = analysis.fine_amount_euro
+            score = analysis.severity_score
+            summary = analysis.violation_summary
+            
+        # Case B: It's a Dictionary (JSON)
+        elif isinstance(analysis, dict):
+            company = analysis.get('company_name', 'Unknown')
+            fine = analysis.get('fine_amount_euro', 0)
+            score = analysis.get('severity_score', 0)
+            summary = analysis.get('violation_summary', 'No summary')
+
+        # Case C: It's just a String (The Error you saw)
+        else:
+            yield f"data: ⚠️ Agent returned text instead of data:\n\n"
+            yield f"data: {str(analysis)}\n\n"
+            return
+
+        # Output the formatted stream
         yield f"data: --------------------------------\n\n"
         yield f"data: 🚨 HIGH RISK ALERT DETECTED 🚨\n\n"
-        yield f"data: 🏢 Company: {analysis.company_name}\n\n"
-        yield f"data: 💶 Fine: €{analysis.fine_amount_euro:,.2f}\n\n"
-        yield f"data: ⚖️ Severity: {analysis.severity_score}/10\n\n"
-        yield f"data: 📝 Summary: {analysis.violation_summary}\n\n"
+        yield f"data: 🏢 Company: {company}\n\n"
+        yield f"data: 💶 Fine: €{fine:,.2f}\n\n"
+        yield f"data: ⚖️ Severity: {score}/10\n\n"
+        yield f"data: 📝 Summary: {summary}\n\n"
         yield f"data: --------------------------------\n\n"
         
     except Exception as e:
