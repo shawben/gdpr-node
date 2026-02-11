@@ -5,6 +5,13 @@ from fastapi import FastAPI, Request, Response, HTTPException
 from fastapi.responses import StreamingResponse
 from web3 import Web3
 
+# ---------------------------------------------------------
+# 👇 THE FIX: Force Python to look in the 'app' folder
+# ---------------------------------------------------------
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
+# ---------------------------------------------------------
+
 # --- IMPORT YOUR AI AGENT ---
 from feed import fetch_latest_ruling
 from agent import analyze_ruling
