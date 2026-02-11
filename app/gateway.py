@@ -41,7 +41,7 @@ def verify_payment(tx_hash, sender):
             return False
             
         # 2. Check Value (Compare in WEI to avoid decimal errors)
-        required_wei = w3.to_wei(PRICE_ETH, 'ether'
+        required_wei = w3.to_wei(PRICE_ETH, 'ether')
         if tx['value'] < required_wei:
             print(f"❌ Insufficient Funds! Sent: {tx['value']}, Needed: {required_wei}")
             return False
