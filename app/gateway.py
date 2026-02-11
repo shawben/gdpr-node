@@ -40,9 +40,10 @@ def verify_payment(tx_hash, sender):
             print(f"❌ Wrong Recipient: {tx['to']}")
             return False
             
-        # 2. Check Value
-        if w3.from_wei(tx['value'], 'ether') < PRICE_ETH:
-            print(f"❌ Insufficient Funds: {tx['value']}")
+        # 2. Check Value (Compare in WEI to avoid decimal errors)
+        required_wei = w3.to_wei(PRICE_ETH, 'ether'
+        if tx['value'] < required_wei:
+            print(f"❌ Insufficient Funds! Sent: {tx['value']}, Needed: {required_wei}")
             return False
             
         # 3. Check Sender (The "Identity" Check)
