@@ -6,3 +6,6 @@ fastapi
 web3
 httpx
 python-dotenv
+requests
+beautifulsoup4
+lxml
