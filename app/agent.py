@@ -4,18 +4,23 @@ load_dotenv()
 from pydantic_ai import Agent, RunContext
 from schemas import GDPRAlert
 
-# 1. Define the Agent with explicit return type [None, GDPRAlert]
-# This tells the LLM: "You MUST return a GDPRAlert object, nothing else."
-journalist: Agent[None, GDPRAlert] = Agent(
-    'openai:gpt-4o-mini',
-    result_type=GDPRAlert,  # <--- FORCE THE RETURN TYPE HERE
-    system_prompt="You are a Regulatory Risk Analyst. Extract structured data from GDPR rulings. Always return the result as a structured object, never as plain text."
-)
+# 1. Instantiate the Agent SIMPLY (No complex arguments here)
+journalist = Agent('openai:gpt-4o-mini')
 
-# 2. Your analysis function
+# 2. Add System Prompt via Decorator (The robust way)
+@journalist.system_prompt
+def add_system_prompt(ctx: RunContext[None]):
+    return (
+        "You are a Regulatory Risk Analyst. Extract structured data from GDPR rulings. "
+        "Always return the result as a structured object matching the schema."
+    )
+
+# 3. Analysis Function
 async def analyze_ruling(ruling_text: str):
-    # Run the agent
-    result = await journalist.run(ruling_text)
+    # 👇 FORCE THE RESULT TYPE HERE (Runtime enforcement)
+    result = await journalist.run(ruling_text, result_type=GDPRAlert)
     
-    # Return the structured data (The object itself)
-    return result.data  # In newer versions this might be .data or .output depending on exact version, but let's stick to the object.
+    # Return the data.
+    # Note: If the agent was forced to return a type, the result object 
+    # will put that structured data into .data
+    return result.data
