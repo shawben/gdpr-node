@@ -18,4 +18,4 @@ def add_system_prompt():
 async def analyze_ruling(ruling_text: str):
     # This calls the agent to process the text
     result = await journalist.run(ruling_text)
-    return result.data
+    return result.output
